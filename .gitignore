@@ -38,3 +38,6 @@ msbuild.wrn
 
 # JetBrains Rider
 .idea/
+
+**/screenshots/**
+**/sharex_db/**

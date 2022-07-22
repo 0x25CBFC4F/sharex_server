@@ -1,0 +1,46 @@
+services:
+  database:
+    image: postgres:latest
+    container_name: sharex_db
+    expose:
+      - 5432
+    environment:
+      POSTGRES_DB: sharex
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - "./sharex_db:/var/lib/postgresql/data/pgdata:rw"
+    healthcheck:
+      # pgsql restarts a few times at the first run so we wait a bit.
+      test: ["CMD-SHELL", "sleep 3; pg_isready -U admin -d sharex"]
+      interval: 1s
+      timeout: 10s
+      retries: 30
+
+  sharex_server:
+    image: 0x25cbfc4f/sharex_server:latest
+    container_name: sharex_server
+    ports:
+      - 80:5000
+    environment:
+      # URL for your server, you can bind it to any interface or port
+      ASPNETCORE_URLS: http://0.0.0.0:5000
+      # Server environment. You can leave it with 'Production'
+      ASPNETCORE_ENVIRONMENT: Production
+      # Unused value (for now)
+      ShareX__AccessToken: AAABBBCCC
+      # Directory where ShareX will store all of your screenshots
+      ShareX__ScreenshotsDirectory: /app/screenshots
+      # Base URL which will be used for your media URLs
+      ShareX__BaseUrl: http://localhost
+      # Uncomment this line to override base url for media URLs
+      #ShareX__PublicUrl: http://another-host
+      # Connection string for your PostgreSQL database
+      # You don't need to replace it. This docker-compose takes care of it.
+      ConnectionStrings__Default: User ID=admin;Password=admin;Host=sharex_db;Port=5432;Database=sharex;
+    volumes:
+      - "./screenshots:/app/screenshots:rw"
+    depends_on:
+      database:
+        condition: service_healthy

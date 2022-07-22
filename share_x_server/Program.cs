@@ -9,6 +9,8 @@ using ShareXServer.Services.Urls;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
+
 builder.Services.Configure<ServerOptions>(builder.Configuration.GetSection("ShareX"));
 builder.Services.AddControllers();
 
