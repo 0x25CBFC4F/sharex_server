@@ -25,3 +25,20 @@ How to run:
 4. Run `docker-compose up` or `docker-compose up -d` to run in headless mode.
 5. Done!
 
+## ShareX Custom Uploader settings
+
+```json
+{
+  "Version": "14.0.1",
+  "Name": "ShareX Server",
+  "DestinationType": "ImageUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "http://localhost/s/u",
+  "Body": "MultipartFormData",
+  "FileFormName": "file",
+  "URL": "{json:$.data.screenshotUrl}",
+  "DeletionURL": " {json:$.data.deletionUrl}"
+}
+```
+
+Replace `localhost` with your domain/full path and you're done.
