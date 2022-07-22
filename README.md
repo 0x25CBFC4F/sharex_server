@@ -16,4 +16,12 @@ PHP is a good language but only if done properly. Scripts made in a 10-minute ti
 
 ## How to run
 
-Easiest way to run it is via `docker-compose`. Go to the `docker_compose_example` and see ready-to-run Docker Compose file!
+Easiest way to run it is via `docker-compose`. Go to the [`docker_compose_example`](https://github.com/0x25CBFC4F/sharex_server/tree/master/docker_compose_example) and see ready-to-run Docker Compose file!
+
+How to run:
+1. Download [`docker-compose.yaml`](https://raw.githubusercontent.com/0x25CBFC4F/sharex_server/master/docker_compose_example/docker-compose.yaml)
+2. Place it whenever you want to host your server
+3. Run `docker-compose pull`
+4. Run `docker-compose up` or `docker-compose up -d` to run in headless mode.
+5. Done!
+
