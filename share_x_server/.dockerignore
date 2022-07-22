@@ -1,0 +1,4 @@
+bin
+obj
+screenshots
+**/appsettings*.json
