@@ -34,6 +34,7 @@ builder.Services.AddLogging(x =>
 builder.Services.AddScoped<IMigrationApplierService, MigrationApplierService>();
 builder.Services.AddSingleton<IUrlGeneratorService, UrlGeneratorService>();
 builder.Services.AddSingleton<IMediaService, MediaService>();
+builder.Services.AddSingleton<IMediaMimeTypeResolverService, MediaMimeTypeResolverService>();
 
 builder.Services.AddSingleton<IMediaRepository, MediaRepository>();
 

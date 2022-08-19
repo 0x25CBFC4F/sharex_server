@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ShareXServer.Database.Enums;
 using ShareXServer.Models;
 using ShareXServer.Services.Medias;
 using ShareXServer.Services.Urls;
@@ -21,9 +22,9 @@ public class MediaController : Controller
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> View(Guid id, CancellationToken cancellationToken)
     {
-        var media = await _mediaService.Get(id, cancellationToken);
+        var mediaResult = await _mediaService.Get(id, cancellationToken);
 
-        if (media.IsFailed)
+        if (mediaResult.IsFailed)
         {
             return Json(new BaseResponse<object>
             {
@@ -32,11 +33,12 @@ public class MediaController : Controller
             });
         }
 
-        return File(media.Value, "image/png");
+        var mediaInfo = mediaResult.Value;
+        return File(mediaInfo.Stream, mediaInfo.MimeType);
     }
     
     [HttpPost("upload")]
-    public async Task<BaseResponse<ScreenshotUploadResult>> Upload(CancellationToken cancellationToken)
+    public async Task<BaseResponse<ScreenshotUploadResult>> Upload([FromQuery] bool isText, CancellationToken cancellationToken)
     {
         var formFiles = Request.Form.Files;
 
@@ -49,7 +51,7 @@ public class MediaController : Controller
             };
         }
 
-        var result = await _mediaService.Upload(formFiles.First().OpenReadStream(), cancellationToken);
+        var result = await _mediaService.Upload(formFiles.First().OpenReadStream(), isText, cancellationToken);
 
         if (result.IsFailed)
         {
@@ -67,7 +69,7 @@ public class MediaController : Controller
             Successful = true,
             Data = new ScreenshotUploadResult
             {
-                ScreenshotUrl = viewUrl,
+                Url = viewUrl,
                 DeletionUrl = deleteUrl
             }
         };

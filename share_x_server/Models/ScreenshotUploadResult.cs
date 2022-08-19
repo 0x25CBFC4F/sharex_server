@@ -1,7 +1,9 @@
 ﻿namespace ShareXServer.Models;
 
+#nullable disable
+
 public class ScreenshotUploadResult
 {
-    public string ScreenshotUrl { get; set; }
+    public string Url { get; set; }
     public string DeletionUrl { get; set; }
 }

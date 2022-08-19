@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Microsoft.Extensions.Options;
 using ShareXServer.Configuration;
+using ShareXServer.Database.Enums;
 using ShareXServer.Database.Models;
 using ShareXServer.Services.Repositories.Medias;
 
@@ -11,34 +12,34 @@ public class MediaService : IMediaService
     private readonly IMediaRepository _repository;
     private readonly IOptionsMonitor<ServerOptions> _optionsMonitor;
     private readonly ILogger<MediaService> _logger;
+    private readonly IMediaMimeTypeResolverService _mimeTypeResolverService;
 
-    public MediaService(IMediaRepository repository, IOptionsMonitor<ServerOptions> optionsMonitor, ILogger<MediaService> logger)
+    public MediaService(IMediaRepository repository, IOptionsMonitor<ServerOptions> optionsMonitor, ILogger<MediaService> logger, IMediaMimeTypeResolverService mimeTypeResolverService)
     {
         _repository = repository;
         _optionsMonitor = optionsMonitor;
         _logger = logger;
+        _mimeTypeResolverService = mimeTypeResolverService;
     }
     
-    public async Task<Result<Stream>> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<MediaInfo>> Get(Guid id, CancellationToken cancellationToken)
     {
-        var media = await _repository.Get(id, cancellationToken);
+        var mediaResult = await _repository.Get(id, cancellationToken);
 
-        if (media.IsFailed)
+        if (mediaResult.IsFailed)
         {
-            return Result.Fail(media.Errors.First().Message);
+            return Result.Fail(mediaResult.Errors.First().Message);
         }
 
-        var fullFilePath = GetMediaPath(media.Value.FileName);
-        return File.OpenRead(fullFilePath);
+        var media = mediaResult.Value;
+        var fullFilePath = GetMediaPath(media.FileName);
+        
+        return Result.Ok(new MediaInfo(File.OpenRead(fullFilePath), media.MimeType));
     }
 
-    public async Task<Result<Media>> Upload(Stream screenshotStream, CancellationToken cancellationToken)
+    public async Task<Result<Media>> Upload(Stream mediaStream, bool isText, CancellationToken cancellationToken)
     {
-        if (!ValidatePngHeader(screenshotStream))
-        {
-            return Result.Fail("Got an invalid PNG file.");
-        }
-
+        var (mediaType, mediaMimeType) = _mimeTypeResolverService.Resolve(mediaStream, isText);
         var options = _optionsMonitor.CurrentValue;
         var fileName = $"{Guid.NewGuid():N}.bin";
 
@@ -60,7 +61,7 @@ public class MediaService : IMediaService
 
         try
         {
-            await screenshotStream.CopyToAsync(fileStream, cancellationToken);
+            await mediaStream.CopyToAsync(fileStream, cancellationToken);
             await fileStream.FlushAsync(cancellationToken);
         }
         catch (Exception exception)
@@ -73,7 +74,7 @@ public class MediaService : IMediaService
 
         fileStream.Close();
         
-        var media = await _repository.Add(fileName, cancellationToken);
+        var media = await _repository.Add(fileName, mediaType, mediaMimeType, cancellationToken);
 
         if (media.IsFailed)
         {
@@ -114,18 +115,6 @@ public class MediaService : IMediaService
         }
 
         return Result.Ok();
-    }
-
-    private static bool ValidatePngHeader(Stream stream)
-    {
-        var pngHeader = new byte[] { 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a };
-        var streamHeader = new byte[pngHeader.Length];
-        
-        stream.Seek(0, SeekOrigin.Begin);
-        _ = stream.Read(streamHeader);
-        stream.Seek(0, SeekOrigin.Begin);
-        
-        return pngHeader.SequenceEqual(streamHeader);
     }
 
     private string GetMediaPath(string fileName)

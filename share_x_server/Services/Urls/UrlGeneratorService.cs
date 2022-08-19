@@ -16,8 +16,8 @@ public class UrlGeneratorService : IUrlGeneratorService
     public (string AccessUrl, string DeleteUrl) GenerateFor(Media media)
     {
         var baseUrl = new Uri(_options.Value.BaseUrl, UriKind.Absolute);
-        var viewUrl = new Uri(baseUrl, $"s/{media.Id:N}");
-        var deleteUrl = new Uri(baseUrl, $"/s/d/{media.DeleteToken}");
+        var viewUrl = new Uri(baseUrl, $"/media/{media.Id:N}");
+        var deleteUrl = new Uri(baseUrl, $"/media/delete/{media.DeleteToken}");
 
         return (viewUrl.ToString(), deleteUrl.ToString());
     }

@@ -1,4 +1,6 @@
-﻿namespace ShareXServer.Database.Models;
+﻿using ShareXServer.Database.Enums;
+
+namespace ShareXServer.Database.Models;
 
 /// <summary>
 /// Screenshot DB entity.
@@ -16,9 +18,19 @@ public class Media
     public DateTime UploadedAt { get; set; }
 
     /// <summary>
+    /// Media type.
+    /// </summary>
+    public MediaType MediaType { get; set; }
+    
+    /// <summary>
     /// File name on the disk.
     /// </summary>
     public string FileName { get; set; } = null!;
+
+    /// <summary>
+    /// File Mime-Type.
+    /// </summary>
+    public string MimeType { get; set; } = null!;
     
     /// <summary>
     /// Delete token.

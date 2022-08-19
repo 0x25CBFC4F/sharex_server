@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using ShareXServer.Database;
+using ShareXServer.Database.Enums;
 using ShareXServer.Database.Models;
 
 namespace ShareXServer.Services.Repositories.Medias;
@@ -21,14 +22,16 @@ public class MediaRepository : IMediaRepository
         return media is not null ? Result.Ok(media) : Result.Fail("No media with that ID was found.");
     }
 
-    public async Task<Result<Media>> Add(string fileName, CancellationToken cancellationToken)
+    public async Task<Result<Media>> Add(string fileName, MediaType mediaType, string mimeType, CancellationToken cancellationToken)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         
         var media = new Media
         {
+            MediaType = mediaType,
             UploadedAt = DateTime.UtcNow,
             FileName = fileName,
+            MimeType = mimeType,
             DeleteToken = $"{Guid.NewGuid():N}"
         };
 

@@ -39,6 +39,6 @@ msbuild.wrn
 # JetBrains Rider
 .idea/
 
-**/screenshots/**
+**/media/**
 **/sharex_db/**
 **/appsettings.Development.json

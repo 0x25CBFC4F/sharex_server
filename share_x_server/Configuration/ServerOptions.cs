@@ -1,5 +1,7 @@
 ﻿namespace ShareXServer.Configuration;
 
+#nullable disable
+
 public class ServerOptions
 {
     public string AccessToken { get; set; }
