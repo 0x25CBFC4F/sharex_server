@@ -2,6 +2,7 @@
 
 [![DockerHub](https://img.shields.io/badge/Docker%20Image-Get%20on%20DockerHub!-success)](https://hub.docker.com/repository/docker/0x25cbfc4f/sharex_server)
 ![dotnet](https://img.shields.io/badge/Powered%20by-dotnet-success)
+[![Build Status](https://jenkins.nullcodes.xyz/job/sharex_server/badge/icon)](https://jenkins.nullcodes.xyz/job/sharex_server/)
 
 ## Short description
 
