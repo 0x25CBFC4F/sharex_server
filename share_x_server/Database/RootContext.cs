@@ -7,7 +7,7 @@ public class RootContext : DbContext
 {
     public RootContext(DbContextOptions options) : base(options) {}
     
-    public DbSet<Screenshot> Screenshots { get; set; }
+    public DbSet<Media> Media { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

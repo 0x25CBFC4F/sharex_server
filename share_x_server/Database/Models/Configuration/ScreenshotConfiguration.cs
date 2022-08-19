@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ShareXServer.Database.Models.Configuration;
 
-public class ScreenshotConfiguration : IEntityTypeConfiguration<Screenshot>
+public class ScreenshotConfiguration : IEntityTypeConfiguration<Media>
 {
-    public void Configure(EntityTypeBuilder<Screenshot> entity)
+    public void Configure(EntityTypeBuilder<Media> entity)
     {
         entity.HasKey(x => x.Id);
 

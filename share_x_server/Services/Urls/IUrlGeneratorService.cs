@@ -4,5 +4,5 @@ namespace ShareXServer.Services.Urls;
 
 public interface IUrlGeneratorService
 {
-    (string AccessUrl, string DeleteUrl) GenerateFor(Screenshot screenshot);
+    (string AccessUrl, string DeleteUrl) GenerateFor(Media media);
 }

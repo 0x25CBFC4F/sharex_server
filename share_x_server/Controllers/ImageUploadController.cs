@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using ShareXServer.Configuration;
 using ShareXServer.Models;
-using ShareXServer.Services.Screenshots;
+using ShareXServer.Services.Medias;
 using ShareXServer.Services.Urls;
 
 namespace ShareXServer.Controllers;
@@ -12,20 +12,20 @@ namespace ShareXServer.Controllers;
 public class ImageUploadController : Controller
 {
     private readonly IOptions<ServerOptions> _serverOptions;
-    private readonly IScreenshotService _screenshotService;
+    private readonly IMediaService _mediaService;
     private readonly IUrlGeneratorService _urlGeneratorService;
 
-    public ImageUploadController(IOptions<ServerOptions> serverOptions, IScreenshotService screenshotService, IUrlGeneratorService urlGeneratorService)
+    public ImageUploadController(IOptions<ServerOptions> serverOptions, IMediaService mediaService, IUrlGeneratorService urlGeneratorService)
     {
         _serverOptions = serverOptions;
-        _screenshotService = screenshotService;
+        _mediaService = mediaService;
         _urlGeneratorService = urlGeneratorService;
     }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> ViewScreenshot(Guid id, CancellationToken cancellationToken)
     {
-        var screenshot = await _screenshotService.GetScreenshot(id, cancellationToken);
+        var screenshot = await _mediaService.Get(id, cancellationToken);
 
         if (screenshot.IsFailed)
         {
@@ -53,7 +53,7 @@ public class ImageUploadController : Controller
             };
         }
 
-        var result = await _screenshotService.UploadScreenshot(formFiles.First().OpenReadStream(), cancellationToken);
+        var result = await _mediaService.Upload(formFiles.First().OpenReadStream(), cancellationToken);
 
         if (result.IsFailed)
         {
@@ -80,7 +80,7 @@ public class ImageUploadController : Controller
     [HttpGet("d/{deletionToken}")]
     public async Task<BaseResponse<object>> DeleteScreenshot(string deletionToken, CancellationToken cancellationToken)
     {
-        var screenshot = await _screenshotService.DeleteScreenshot(deletionToken, cancellationToken);
+        var screenshot = await _mediaService.Delete(deletionToken, cancellationToken);
 
         if (screenshot.IsFailed)
         {

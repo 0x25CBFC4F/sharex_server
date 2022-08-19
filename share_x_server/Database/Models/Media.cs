@@ -3,7 +3,7 @@
 /// <summary>
 /// Screenshot DB entity.
 /// </summary>
-public class Screenshot
+public class Media
 {
     /// <summary>
     /// Unique GUID.

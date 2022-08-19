@@ -13,11 +13,11 @@ public class UrlGeneratorService : IUrlGeneratorService
         _options = options;
     }
     
-    public (string AccessUrl, string DeleteUrl) GenerateFor(Screenshot screenshot)
+    public (string AccessUrl, string DeleteUrl) GenerateFor(Media media)
     {
-        var baseUrl = new Uri(_options.Value.PublicUrl ?? _options.Value.BaseUrl, UriKind.Absolute);
-        var viewUrl = new Uri(baseUrl, $"s/{screenshot.Id:N}");
-        var deleteUrl = new Uri(baseUrl, $"/s/d/{screenshot.DeleteToken}");
+        var baseUrl = new Uri(_options.Value.BaseUrl, UriKind.Absolute);
+        var viewUrl = new Uri(baseUrl, $"s/{media.Id:N}");
+        var deleteUrl = new Uri(baseUrl, $"/s/d/{media.DeleteToken}");
 
         return (viewUrl.ToString(), deleteUrl.ToString());
     }

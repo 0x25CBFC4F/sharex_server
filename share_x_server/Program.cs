@@ -3,8 +3,8 @@ using Serilog;
 using ShareXServer.Configuration;
 using ShareXServer.Database;
 using ShareXServer.Services.Database;
-using ShareXServer.Services.Repositories.Screenshots;
-using ShareXServer.Services.Screenshots;
+using ShareXServer.Services.Medias;
+using ShareXServer.Services.Repositories.Medias;
 using ShareXServer.Services.Urls;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,9 +33,9 @@ builder.Services.AddLogging(x =>
 
 builder.Services.AddScoped<IMigrationApplierService, MigrationApplierService>();
 builder.Services.AddSingleton<IUrlGeneratorService, UrlGeneratorService>();
-builder.Services.AddSingleton<IScreenshotService, ScreenshotService>();
+builder.Services.AddSingleton<IMediaService, MediaService>();
 
-builder.Services.AddSingleton<IScreenshotRepository, ScreenshotRepository>();
+builder.Services.AddSingleton<IMediaRepository, MediaRepository>();
 
 var app = builder.Build();
 

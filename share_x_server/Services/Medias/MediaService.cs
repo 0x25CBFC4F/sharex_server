@@ -2,37 +2,37 @@
 using Microsoft.Extensions.Options;
 using ShareXServer.Configuration;
 using ShareXServer.Database.Models;
-using ShareXServer.Services.Repositories.Screenshots;
+using ShareXServer.Services.Repositories.Medias;
 
-namespace ShareXServer.Services.Screenshots;
+namespace ShareXServer.Services.Medias;
 
-public class ScreenshotService : IScreenshotService
+public class MediaService : IMediaService
 {
-    private readonly IScreenshotRepository _repository;
+    private readonly IMediaRepository _repository;
     private readonly IOptionsMonitor<ServerOptions> _optionsMonitor;
-    private readonly ILogger<ScreenshotService> _logger;
+    private readonly ILogger<MediaService> _logger;
 
-    public ScreenshotService(IScreenshotRepository repository, IOptionsMonitor<ServerOptions> optionsMonitor, ILogger<ScreenshotService> logger)
+    public MediaService(IMediaRepository repository, IOptionsMonitor<ServerOptions> optionsMonitor, ILogger<MediaService> logger)
     {
         _repository = repository;
         _optionsMonitor = optionsMonitor;
         _logger = logger;
     }
     
-    public async Task<Result<Stream>> GetScreenshot(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<Stream>> Get(Guid id, CancellationToken cancellationToken)
     {
-        var screenshot = await _repository.GetScreenshot(id, cancellationToken);
+        var media = await _repository.Get(id, cancellationToken);
 
-        if (screenshot.IsFailed)
+        if (media.IsFailed)
         {
-            return Result.Fail(screenshot.Errors.First().Message);
+            return Result.Fail(media.Errors.First().Message);
         }
 
-        var fullFilePath = GetScreenshotPath(screenshot.Value.FileName);
+        var fullFilePath = GetMediaPath(media.Value.FileName);
         return File.OpenRead(fullFilePath);
     }
 
-    public async Task<Result<Screenshot>> UploadScreenshot(Stream screenshotStream, CancellationToken cancellationToken)
+    public async Task<Result<Media>> Upload(Stream screenshotStream, CancellationToken cancellationToken)
     {
         if (!ValidatePngHeader(screenshotStream))
         {
@@ -40,12 +40,11 @@ public class ScreenshotService : IScreenshotService
         }
 
         var options = _optionsMonitor.CurrentValue;
-        
-        var fileName = $"{Guid.NewGuid():N}.png";
+        var fileName = $"{Guid.NewGuid():N}.bin";
 
-        Directory.CreateDirectory(options.ScreenshotsDirectory);
+        Directory.CreateDirectory(options.MediaDirectory);
 
-        var fullFilePath = GetScreenshotPath(fileName);
+        var fullFilePath = GetMediaPath(fileName);
         
         FileStream? fileStream;
 
@@ -74,25 +73,25 @@ public class ScreenshotService : IScreenshotService
 
         fileStream.Close();
         
-        var screenshot = await _repository.AddScreenshot(fileName, cancellationToken);
+        var media = await _repository.Add(fileName, cancellationToken);
 
-        if (screenshot.IsFailed)
+        if (media.IsFailed)
         {
             if (File.Exists(fullFilePath))
             {
                 File.Delete(fullFilePath);
             }
             
-            _logger.LogError("Failed to create screenshot entry in the database");
+            _logger.LogError("Failed to create media entry in the database");
             return Result.Fail("Internal error.");
         }
 
-        return screenshot;
+        return media;
     }
 
-    public async Task<Result> DeleteScreenshot(string deletionToken, CancellationToken cancellationToken)
+    public async Task<Result> Delete(string deletionToken, CancellationToken cancellationToken)
     {
-        var screenshotResult = await _repository.FindScreenshotByDeletionToken(deletionToken, cancellationToken);
+        var screenshotResult = await _repository.FindByDeletionToken(deletionToken, cancellationToken);
 
         if (screenshotResult.IsFailed)
         {
@@ -100,7 +99,7 @@ public class ScreenshotService : IScreenshotService
         }
 
         var screenshot = screenshotResult.Value;
-        var screenshotPath = GetScreenshotPath(screenshot.FileName);
+        var screenshotPath = GetMediaPath(screenshot.FileName);
 
         try
         {
@@ -111,7 +110,7 @@ public class ScreenshotService : IScreenshotService
         }
         finally
         {
-            await _repository.DeleteScreenshot(screenshot.Id, cancellationToken);
+            await _repository.Delete(screenshot.Id, cancellationToken);
         }
 
         return Result.Ok();
@@ -129,9 +128,9 @@ public class ScreenshotService : IScreenshotService
         return pngHeader.SequenceEqual(streamHeader);
     }
 
-    private string GetScreenshotPath(string fileName)
+    private string GetMediaPath(string fileName)
     {
         var options = _optionsMonitor.CurrentValue;
-        return Path.Combine(options.ScreenshotsDirectory, fileName);
+        return Path.Combine(options.MediaDirectory, fileName);
     }
 }
