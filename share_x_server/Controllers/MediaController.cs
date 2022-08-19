@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using ShareXServer.Configuration;
 using ShareXServer.Models;
 using ShareXServer.Services.Medias;
 using ShareXServer.Services.Urls;
@@ -8,39 +6,37 @@ using ShareXServer.Services.Urls;
 namespace ShareXServer.Controllers;
 
 [Controller]
-[Route("s")]
-public class ImageUploadController : Controller
+[Route("media")]
+public class MediaController : Controller
 {
-    private readonly IOptions<ServerOptions> _serverOptions;
     private readonly IMediaService _mediaService;
     private readonly IUrlGeneratorService _urlGeneratorService;
 
-    public ImageUploadController(IOptions<ServerOptions> serverOptions, IMediaService mediaService, IUrlGeneratorService urlGeneratorService)
+    public MediaController(IMediaService mediaService, IUrlGeneratorService urlGeneratorService)
     {
-        _serverOptions = serverOptions;
         _mediaService = mediaService;
         _urlGeneratorService = urlGeneratorService;
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> ViewScreenshot(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> View(Guid id, CancellationToken cancellationToken)
     {
-        var screenshot = await _mediaService.Get(id, cancellationToken);
+        var media = await _mediaService.Get(id, cancellationToken);
 
-        if (screenshot.IsFailed)
+        if (media.IsFailed)
         {
             return Json(new BaseResponse<object>
             {
                 Successful = false,
-                ErrorMessage = "No such screenshot was found."
+                ErrorMessage = "No such media was found."
             });
         }
 
-        return File(screenshot.Value, "image/png");
+        return File(media.Value, "image/png");
     }
     
-    [HttpPost("u")]
-    public async Task<BaseResponse<ScreenshotUploadResult>> UploadScreenshot(CancellationToken cancellationToken)
+    [HttpPost("upload")]
+    public async Task<BaseResponse<ScreenshotUploadResult>> Upload(CancellationToken cancellationToken)
     {
         var formFiles = Request.Form.Files;
 
@@ -60,7 +56,7 @@ public class ImageUploadController : Controller
             return new BaseResponse<ScreenshotUploadResult>
             {
                 Successful = false,
-                ErrorMessage = "Failed to upload a screenshot."
+                ErrorMessage = "Failed to upload media."
             };
         }
 
@@ -77,17 +73,17 @@ public class ImageUploadController : Controller
         };
     }
 
-    [HttpGet("d/{deletionToken}")]
-    public async Task<BaseResponse<object>> DeleteScreenshot(string deletionToken, CancellationToken cancellationToken)
+    [HttpGet("delete/{deletionToken}")]
+    public async Task<BaseResponse<object>> Delete(string deletionToken, CancellationToken cancellationToken)
     {
-        var screenshot = await _mediaService.Delete(deletionToken, cancellationToken);
+        var media = await _mediaService.Delete(deletionToken, cancellationToken);
 
-        if (screenshot.IsFailed)
+        if (media.IsFailed)
         {
             return new BaseResponse<object>
             {
                 Successful = false,
-                ErrorMessage = screenshot.Errors.First().Message
+                ErrorMessage = media.Errors.First().Message
             };
         }
 
