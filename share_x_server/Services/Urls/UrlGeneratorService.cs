@@ -12,7 +12,7 @@ public class UrlGeneratorService : IUrlGeneratorService
     {
         _options = options;
     }
-    
+
     public (string AccessUrl, string DeleteUrl) GenerateFor(Media media)
     {
         var baseUrl = new Uri(_options.Value.BaseUrl, UriKind.Absolute);

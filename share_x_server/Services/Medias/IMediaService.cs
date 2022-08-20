@@ -1,5 +1,4 @@
 ﻿using FluentResults;
-using ShareXServer.Database.Enums;
 using ShareXServer.Database.Models;
 
 namespace ShareXServer.Services.Medias;

@@ -13,11 +13,11 @@ public class MigrationApplierService : IMigrationApplierService
         _dbContextFactory = dbContextFactory;
         _logger = logger;
     }
-    
+
     public async Task ApplyMigrations()
     {
-        await using var context = await _dbContextFactory.CreateDbContextAsync(); 
-        
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+
         var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToArray();
 
         if (!pendingMigrations.Any())
@@ -27,9 +27,9 @@ public class MigrationApplierService : IMigrationApplierService
         }
 
         _logger.LogInformation("Found {Count} pending migration(-s)", pendingMigrations.Length);
-        
+
         await context.Database.MigrateAsync();
-        
+
         _logger.LogInformation("Migration is complete");
-    } 
+    }
 }

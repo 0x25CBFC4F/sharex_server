@@ -11,9 +11,9 @@ namespace ShareXServer.Controllers;
 [Route("media")]
 public class MediaController : Controller
 {
+    private static readonly Regex InvalidFileNameCharactersRegex = new($"[{string.Join("", Path.GetInvalidPathChars().Concat(Path.GetInvalidFileNameChars()).Distinct())}]");
     private readonly IMediaService _mediaService;
     private readonly IUrlGeneratorService _urlGeneratorService;
-    private static readonly Regex InvalidFileNameCharactersRegex = new($"[{string.Join("", Path.GetInvalidPathChars().Concat(Path.GetInvalidFileNameChars()).Distinct())}]");
 
     public MediaController(IMediaService mediaService, IUrlGeneratorService urlGeneratorService)
     {
@@ -39,9 +39,9 @@ public class MediaController : Controller
 
         return mediaInfo.MediaType != MediaType.File ?
             File(mediaInfo.Stream, mediaInfo.MimeType, false) :
-            File(mediaInfo.Stream, mediaInfo.MimeType, fileDownloadName: mediaInfo.OriginalFileName);
+            File(mediaInfo.Stream, mediaInfo.MimeType, mediaInfo.OriginalFileName);
     }
-    
+
     [HttpPost("upload")]
     public async Task<BaseResponse<ScreenshotUploadResult>> Upload([FromQuery] bool isText, CancellationToken cancellationToken)
     {
@@ -70,7 +70,7 @@ public class MediaController : Controller
         }
 
         var (viewUrl, deleteUrl) = _urlGeneratorService.GenerateFor(result.Value);
-        
+
         return new BaseResponse<ScreenshotUploadResult>
         {
             Successful = true,

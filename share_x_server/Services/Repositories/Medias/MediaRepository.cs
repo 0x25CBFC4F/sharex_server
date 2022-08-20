@@ -25,7 +25,7 @@ public class MediaRepository : IMediaRepository
     public async Task<Result<Media>> Add(string fileName, string originalFileName, MediaType mediaType, string mimeType, CancellationToken cancellationToken)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        
+
         var media = new Media
         {
             MediaType = mediaType,
@@ -52,17 +52,17 @@ public class MediaRepository : IMediaRepository
     public async Task<Result> Delete(Guid id, CancellationToken cancellationToken)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        
+
         var media = await context.Media.FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
 
         if (media is null)
         {
             return Result.Fail("No media with this ID was found.");
         }
-        
+
         context.Media.Remove(media);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result.Ok();
     }
 

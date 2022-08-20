@@ -1,7 +1,6 @@
 ﻿using FluentResults;
 using Microsoft.Extensions.Options;
 using ShareXServer.Configuration;
-using ShareXServer.Database.Enums;
 using ShareXServer.Database.Models;
 using ShareXServer.Services.Repositories.Medias;
 
@@ -9,10 +8,10 @@ namespace ShareXServer.Services.Medias;
 
 public class MediaService : IMediaService
 {
-    private readonly IMediaRepository _repository;
-    private readonly IOptionsMonitor<ServerOptions> _optionsMonitor;
     private readonly ILogger<MediaService> _logger;
     private readonly IMediaMimeTypeResolverService _mimeTypeResolverService;
+    private readonly IOptionsMonitor<ServerOptions> _optionsMonitor;
+    private readonly IMediaRepository _repository;
 
     public MediaService(IMediaRepository repository, IOptionsMonitor<ServerOptions> optionsMonitor, ILogger<MediaService> logger, IMediaMimeTypeResolverService mimeTypeResolverService)
     {
@@ -21,7 +20,7 @@ public class MediaService : IMediaService
         _logger = logger;
         _mimeTypeResolverService = mimeTypeResolverService;
     }
-    
+
     public async Task<Result<MediaInfo>> Get(Guid id, CancellationToken cancellationToken)
     {
         var mediaResult = await _repository.Get(id, cancellationToken);
@@ -33,7 +32,7 @@ public class MediaService : IMediaService
 
         var media = mediaResult.Value;
         var fullFilePath = GetMediaPath(media.FileName);
-        
+
         return Result.Ok(new MediaInfo(media.OriginalFileName, media.MediaType, File.OpenRead(fullFilePath), media.MimeType));
     }
 
@@ -46,7 +45,7 @@ public class MediaService : IMediaService
         Directory.CreateDirectory(options.MediaDirectory);
 
         var fullFilePath = GetMediaPath(fileName);
-        
+
         FileStream? fileStream;
 
         try
@@ -73,7 +72,7 @@ public class MediaService : IMediaService
         }
 
         fileStream.Close();
-        
+
         var media = await _repository.Add(fileName, originalFileName, mediaType, mediaMimeType, cancellationToken);
 
         if (media.IsFailed)
@@ -82,7 +81,7 @@ public class MediaService : IMediaService
             {
                 File.Delete(fullFilePath);
             }
-            
+
             _logger.LogError("Failed to create media entry in the database");
             return Result.Fail("Internal error.");
         }

@@ -14,10 +14,7 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.Configure<ServerOptions>(builder.Configuration.GetSection("ShareX"));
 builder.Services.AddControllers();
 
-builder.Services.AddPooledDbContextFactory<RootContext>(x =>
-{
-    x.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
-});
+builder.Services.AddPooledDbContextFactory<RootContext>(x => { x.UseNpgsql(builder.Configuration.GetConnectionString("Default")); });
 
 builder.Services.AddLogging(x =>
 {
@@ -27,7 +24,7 @@ builder.Services.AddLogging(x =>
         .ReadFrom.Configuration(builder.Configuration)
         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss}] [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
         .CreateLogger();
-    
+
     x.AddSerilog(logger);
 });
 
@@ -46,9 +43,6 @@ migrationApplierService.ApplyMigrations();
 
 app.UseRouting();
 
-app.UseEndpoints(x =>
-{
-    x.MapControllers();
-});
+app.UseEndpoints(x => { x.MapControllers(); });
 
 app.Run();
