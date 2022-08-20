@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:stable
+    image: postgres:latest
     container_name: sharex_db
     restart: always
     expose:
@@ -20,7 +20,7 @@ services:
       retries: 30
 
   sharex_server:
-    image: 0x25cbfc4f/sharex_server:latest
+    image: 0x25cbfc4f/sharex_server:stable
     container_name: sharex_server
     restart: always
     ports:
