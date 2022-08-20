@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using ShareXServer.Database.Models;
+using ShareXServer.Middlewares;
 using ShareXServer.Models;
 using ShareXServer.Services.UrlGenerator;
 using ShareXServer.Services.UrlShortener;
@@ -27,6 +28,7 @@ public class UrlController : Controller
         return url.IsSuccess ? Redirect(url.Value!) : Json(Result.Fail(url.Errors));
     }
 
+    [AccessTokenRequired]
     [HttpPost("shorten")]
     public async Task<BaseResponse<ShortenedUrl>> ShortenUrl([FromForm] string realUrl, CancellationToken cancellationToken)
     {

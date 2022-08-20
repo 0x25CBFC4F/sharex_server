@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using ShareXServer.Database.Enums;
+using ShareXServer.Middlewares;
 using ShareXServer.Models;
 using ShareXServer.Services.Medias;
 using ShareXServer.Services.UrlGenerator;
@@ -42,6 +43,7 @@ public class MediaController : Controller
             File(mediaInfo.Stream, mediaInfo.MimeType, mediaInfo.OriginalFileName);
     }
 
+    [AccessTokenRequired]
     [HttpPost("upload")]
     public async Task<BaseResponse<ScreenshotUploadResult>> Upload([FromQuery] bool isText, CancellationToken cancellationToken)
     {

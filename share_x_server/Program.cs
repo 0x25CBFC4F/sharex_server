@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using ShareXServer.Configuration;
 using ShareXServer.Database;
+using ShareXServer.Middlewares;
 using ShareXServer.Repositories.Medias;
 using ShareXServer.Repositories.ShortenedUrls;
 using ShareXServer.Services.Database;
@@ -46,7 +47,7 @@ var migrationApplierService = scope.ServiceProvider.GetRequiredService<IMigratio
 migrationApplierService.ApplyMigrations();
 
 app.UseRouting();
-
+app.UseMiddleware<AccessTokenMiddleware>();
 app.UseEndpoints(x => { x.MapControllers(); });
 
 app.Run();
