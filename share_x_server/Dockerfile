@@ -7,4 +7,5 @@ RUN dotnet publish -c Release
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 as final
 WORKDIR /app
 COPY --from=0 /build/bin/Release/net6.0 /app
+ENV ASPNETCORE_ENVIRONMENT=Production
 ENTRYPOINT dotnet share_x_server.dll

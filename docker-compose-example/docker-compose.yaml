@@ -30,19 +30,9 @@ services:
       ASPNETCORE_URLS: http://0.0.0.0:5000
       # Server environment. You can leave it with 'Production'
       ASPNETCORE_ENVIRONMENT: Production
-      # Unused value (for now)
-      ShareX__AccessToken: AAABBBCCC
-      # Directory where ShareX will store all of your screenshots
-      ShareX__ScreenshotsDirectory: /app/screenshots
-      # Base URL which will be used for your media URLs
-      ShareX__BaseUrl: http://localhost
-      # Uncomment this line to override base url for media URLs
-      #ShareX__PublicUrl: http://another-host
-      # Connection string for your PostgreSQL database
-      # You don't need to replace it. This docker-compose takes care of it.
-      ConnectionStrings__Default: User ID=admin;Password=admin;Host=sharex_db;Port=5432;Database=sharex;
     volumes:
-      - "./screenshots:/app/screenshots:rw"
+      - "./media:/app/media:rw"
+      - "./appsettings.Production.json:/app/appsettings.Production.json:ro"
     depends_on:
       database:
         condition: service_healthy
