@@ -1,14 +1,28 @@
 # How to configure and run ShareX Server
 
+## Docker-compose
+
 Easiest way to run it is via `docker-compose`. Go to the [`docker-compose-example`](https://github.com/0x25CBFC4F/sharex_server/tree/master/docker-compose-example) and see ready-to-run Docker Compose file!
 
 How to run:
-1. Download [`docker-compose.yaml`](https://raw.githubusercontent.com/0x25CBFC4F/sharex_server/master/docker_compose_example/docker-compose.yaml) and [`appsettings.Production.json`](https://github.com/0x25CBFC4F/sharex_server/blob/master/docker-compose-example/appsettings.Production.json)
+1. Download [`docker-compose.yaml`](https://github.com/0x25CBFC4F/sharex_server/blob/master/docker-compose-example/docker-compose.yaml) and [`appsettings.Production.json`](https://github.com/0x25CBFC4F/sharex_server/blob/master/docker-compose-example/appsettings.Production.json)
 2. Change desired settings in `appsettings.Production.json`
 3. Place it whenever you want to host your server
 4. Run `docker-compose pull`
 5. Run `docker-compose up` or `docker-compose up -d` to run in headless mode.
 6. Done!
+
+## Docker images
+
+You can find Docker images at [hub.docker.com](https://hub.docker.com/repository/registry-1.docker.io/0x25cbfc4f/sharex_server/general).
+
+Tag table:
+
+| Tag | Stable | Description |
+| --- | ------ | ----------- |
+| latest | ❌ | Latest image built by Jenkins |
+| stable | ✔️ | Latest stable version |
+| 1.1.### | ❌ | Image built by Jenkins, where ### is a build number |
 
 # `appsettings.Production.json` example
 
@@ -75,7 +89,7 @@ Then ShareX should return media URL as `http://domain.com/sharex/media/XXXXXXXXX
 
 `$.ShareX.MediaCleanup.Enabled` - enables automatic media cleanup to keep free space on the disk.
 
-`$.ShareX.MediaCleanup.CheckInterval` - sets interval in which server will check for outdated media. Format is `DAYS.HOURS:MINUTES:SECONDS`. `"04:00:00"` means "every 4 hours"
+`$.ShareX.MediaCleanup.CheckInterval` - sets interval in which server will check for outdated media. Format is [`DAYS.HOURS:MINUTES:SECONDS`](https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-timespan-format-strings#the-constant-c-format-specifier). `"04:00:00"` means "every 4 hours"
 
-`$.ShareX.MediaCleanup.MaxMediaLifespan` - sets maximum lifespan of a media. If that time runs out - media gets deleted on the next check.
+`$.ShareX.MediaCleanup.MaxMediaLifespan` - sets maximum lifespan of a media. If that time runs out - media gets deleted on the next check. Same format as above.
 

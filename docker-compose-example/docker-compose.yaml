@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:latest
+    image: postgres:stable
     container_name: sharex_db
     restart: always
     expose:
