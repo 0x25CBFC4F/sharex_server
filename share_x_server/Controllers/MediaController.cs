@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 using ShareXServer.Database.Enums;
 using ShareXServer.Models;
 using ShareXServer.Services.Medias;
@@ -12,6 +13,7 @@ public class MediaController : Controller
 {
     private readonly IMediaService _mediaService;
     private readonly IUrlGeneratorService _urlGeneratorService;
+    private static readonly Regex InvalidFileNameCharactersRegex = new($"[{string.Join("", Path.GetInvalidPathChars().Concat(Path.GetInvalidFileNameChars()).Distinct())}]");
 
     public MediaController(IMediaService mediaService, IUrlGeneratorService urlGeneratorService)
     {
@@ -34,7 +36,10 @@ public class MediaController : Controller
         }
 
         var mediaInfo = mediaResult.Value;
-        return File(mediaInfo.Stream, mediaInfo.MimeType);
+
+        return mediaInfo.MediaType != MediaType.File ?
+            File(mediaInfo.Stream, mediaInfo.MimeType, false) :
+            File(mediaInfo.Stream, mediaInfo.MimeType, fileDownloadName: mediaInfo.OriginalFileName);
     }
     
     [HttpPost("upload")]
@@ -51,7 +56,9 @@ public class MediaController : Controller
             };
         }
 
-        var result = await _mediaService.Upload(formFiles.First().OpenReadStream(), isText, cancellationToken);
+        var formFile = formFiles.First();
+        var sanitizedName = InvalidFileNameCharactersRegex.Replace(formFile.FileName.Trim(), "_");
+        var result = await _mediaService.Upload(sanitizedName, formFile.OpenReadStream(), isText, cancellationToken);
 
         if (result.IsFailed)
         {

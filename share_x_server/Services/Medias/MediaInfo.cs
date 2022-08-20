@@ -1,3 +1,5 @@
-﻿namespace ShareXServer.Services.Medias;
+﻿using ShareXServer.Database.Enums;
 
-public record MediaInfo(Stream Stream, string MimeType);
+namespace ShareXServer.Services.Medias;
+
+public record MediaInfo(string OriginalFileName, MediaType MediaType, Stream Stream, string MimeType);

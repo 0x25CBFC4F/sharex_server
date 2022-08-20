@@ -34,10 +34,10 @@ public class MediaService : IMediaService
         var media = mediaResult.Value;
         var fullFilePath = GetMediaPath(media.FileName);
         
-        return Result.Ok(new MediaInfo(File.OpenRead(fullFilePath), media.MimeType));
+        return Result.Ok(new MediaInfo(media.OriginalFileName, media.MediaType, File.OpenRead(fullFilePath), media.MimeType));
     }
 
-    public async Task<Result<Media>> Upload(Stream mediaStream, bool isText, CancellationToken cancellationToken)
+    public async Task<Result<Media>> Upload(string originalFileName, Stream mediaStream, bool isText, CancellationToken cancellationToken)
     {
         var (mediaType, mediaMimeType) = _mimeTypeResolverService.Resolve(mediaStream, isText);
         var options = _optionsMonitor.CurrentValue;
@@ -74,7 +74,7 @@ public class MediaService : IMediaService
 
         fileStream.Close();
         
-        var media = await _repository.Add(fileName, mediaType, mediaMimeType, cancellationToken);
+        var media = await _repository.Add(fileName, originalFileName, mediaType, mediaMimeType, cancellationToken);
 
         if (media.IsFailed)
         {

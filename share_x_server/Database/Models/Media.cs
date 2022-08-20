@@ -21,6 +21,11 @@ public class Media
     /// Media type.
     /// </summary>
     public MediaType MediaType { get; set; }
+
+    /// <summary>
+    /// Sanitized original file name.
+    /// </summary>
+    public string OriginalFileName { get; set; } = null!;
     
     /// <summary>
     /// File name on the disk.

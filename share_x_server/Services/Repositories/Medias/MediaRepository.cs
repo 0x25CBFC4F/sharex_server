@@ -22,7 +22,7 @@ public class MediaRepository : IMediaRepository
         return media is not null ? Result.Ok(media) : Result.Fail("No media with that ID was found.");
     }
 
-    public async Task<Result<Media>> Add(string fileName, MediaType mediaType, string mimeType, CancellationToken cancellationToken)
+    public async Task<Result<Media>> Add(string fileName, string originalFileName, MediaType mediaType, string mimeType, CancellationToken cancellationToken)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         
@@ -31,6 +31,7 @@ public class MediaRepository : IMediaRepository
             MediaType = mediaType,
             UploadedAt = DateTime.UtcNow,
             FileName = fileName,
+            OriginalFileName = originalFileName,
             MimeType = mimeType,
             DeleteToken = $"{Guid.NewGuid():N}"
         };
