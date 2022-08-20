@@ -2,7 +2,7 @@
 using ShareXServer.Database.Enums;
 using ShareXServer.Database.Models;
 
-namespace ShareXServer.Services.Repositories.Medias;
+namespace ShareXServer.Repositories.Medias;
 
 public interface IMediaRepository
 {

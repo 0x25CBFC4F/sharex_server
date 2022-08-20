@@ -2,7 +2,7 @@
 using ShareXServer.Configuration;
 using ShareXServer.Database.Models;
 
-namespace ShareXServer.Services.Urls;
+namespace ShareXServer.Services.UrlGenerator;
 
 public class UrlGeneratorService : IUrlGeneratorService
 {
@@ -20,5 +20,10 @@ public class UrlGeneratorService : IUrlGeneratorService
         var deleteUrl = new Uri(baseUrl, $"/media/delete/{media.DeleteToken}");
 
         return (viewUrl.ToString(), deleteUrl.ToString());
+    }
+
+    public string GenerateFor(ShortenedUrl shortenedUrl)
+    {
+        return new Uri(new Uri(_options.Value.BaseUrl, UriKind.Absolute), new Uri($"/url/{shortenedUrl.Id}", UriKind.Relative)).ToString();
     }
 }

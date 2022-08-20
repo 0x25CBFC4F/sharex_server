@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShareXServer.Database.Enums;
 using ShareXServer.Models;
 using ShareXServer.Services.Medias;
-using ShareXServer.Services.Urls;
+using ShareXServer.Services.UrlGenerator;
 
 namespace ShareXServer.Controllers;
 

@@ -12,6 +12,7 @@ public class RootContext : DbContext
     }
 
     public DbSet<Media> Media { get; set; }
+    public DbSet<ShortenedUrl> ShortenedUrls { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using ShareXServer.Configuration;
 using ShareXServer.Database.Models;
-using ShareXServer.Services.Repositories.Medias;
+using ShareXServer.Repositories.Medias;
 
 namespace ShareXServer.Services.Medias;
 
