@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using ShareXServer.Configuration;
 using ShareXServer.Database;
+using ShareXServer.HostedServices;
 using ShareXServer.Middlewares;
 using ShareXServer.Repositories.Medias;
 using ShareXServer.Repositories.ShortenedUrls;
@@ -31,7 +32,7 @@ builder.Services.AddLogging(x =>
     x.AddSerilog(logger);
 });
 
-builder.Services.AddScoped<IMigrationApplierService, MigrationApplierService>();
+builder.Services.AddSingleton<IMigrationApplierService, MigrationApplierService>();
 builder.Services.AddSingleton<IUrlGeneratorService, UrlGeneratorService>();
 builder.Services.AddSingleton<IMediaService, MediaService>();
 builder.Services.AddSingleton<IUrlShortenerService, UrlShortenerService>();
@@ -39,6 +40,8 @@ builder.Services.AddSingleton<IMediaMimeTypeResolverService, MediaMimeTypeResolv
 
 builder.Services.AddSingleton<IMediaRepository, MediaRepository>();
 builder.Services.AddSingleton<IShortenedUrlRepository, ShortenedUrlRepository>();
+
+builder.Services.AddHostedService<MediaCleanupService>();
 
 var app = builder.Build();
 

@@ -10,5 +10,5 @@ public interface IMediaRepository
     Task<Result<Media>> Add(string fileName, string originalFileName, MediaType mediaType, string mimeType, CancellationToken cancellationToken);
     Task<Result<Media>> FindByDeletionToken(string deletionToken, CancellationToken cancellationToken);
     Task<Result> Delete(Guid id, CancellationToken cancellationToken);
-    Task<Result<IEnumerable<Media>>> FindOutdated(TimeSpan maxLifespan, CancellationToken cancellationToken);
+    Task<Result<Media[]>> FindOutdated(TimeSpan maxLifespan, CancellationToken cancellationToken);
 }

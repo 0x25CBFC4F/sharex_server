@@ -3,4 +3,5 @@
 public interface IMigrationApplierService
 {
     Task ApplyMigrations();
+    Task WaitForMigrationsToApply();
 }

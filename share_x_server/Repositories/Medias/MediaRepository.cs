@@ -66,10 +66,10 @@ public class MediaRepository : IMediaRepository
         return Result.Ok();
     }
 
-    public async Task<Result<IEnumerable<Media>>> FindOutdated(TimeSpan maxLifespan, CancellationToken cancellationToken)
+    public async Task<Result<Media[]>> FindOutdated(TimeSpan maxLifespan, CancellationToken cancellationToken)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        var outdatedMedia = context.Media.Where(x => DateTime.UtcNow - x.UploadedAt >= maxLifespan).AsEnumerable();
+        var outdatedMedia = await context.Media.Where(x => DateTime.UtcNow - x.UploadedAt >= maxLifespan).ToArrayAsync(cancellationToken);
         return Result.Ok(outdatedMedia);
     }
 }
